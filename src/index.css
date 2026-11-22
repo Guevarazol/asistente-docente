@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+}
+
+.font-serif-diploma {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+.font-script-diploma {
+  font-family: 'Great Vibes', 'Brush Script MT', cursive;
+}
+
+/* Safe area padding for iOS/Android standalone PWA */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Print & WYSIWYG Paper Rules */
+.doc-paper {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.06);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.doc-paper-letter-portrait {
+  width: 8.5in;
+  min-height: 11in;
+  padding: 0.55in 0.6in;
+}
+
+.doc-paper-letter-landscape {
+  width: 11in;
+  min-height: 8.5in;
+  padding: 0.45in 0.5in;
+}
+
+.doc-paper-oficio-portrait {
+  width: 8.5in;
+  height: 13in;
+  padding: 0.42in;
+  overflow: hidden;
+}
+
+.doc-paper-oficio-landscape {
+  width: 13in;
+  height: 8.5in;
+  padding: 0.42in;
+  overflow: hidden;
+}
+
+.doc-paper-legal-portrait {
+  width: 8.5in;
+  height: 14in;
+  padding: 0.42in;
+  overflow: hidden;
+}
+
+.doc-paper-legal-landscape {
+  width: 14in;
+  height: 8.5in;
+  padding: 0.42in;
+  overflow: hidden;
+}
+
+.doc-paper-a4-portrait {
+  width: 210mm;
+  height: 297mm;
+  padding: 12mm;
+  overflow: hidden;
+}
+
+.doc-paper-a4-landscape {
+  width: 297mm;
+  height: 210mm;
+  padding: 12mm;
+  overflow: hidden;
+}
+
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+.avoid-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Highlight placeholders [COMPLETAR] and [VERIFICAR] */
+.marker-completar {
+  background-color: #fef08a;
+  color: #713f12;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.marker-verificar {
+  background-color: #fed7aa;
+  color: #7c2d12;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .doc-paper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: none !important;
+    transform: none !important;
+  }
+
+  .doc-paper-letter-portrait {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 0.4in !important;
+  }
+
+  .doc-paper-letter-landscape {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 0.35in !important;
+  }
+
+  .doc-paper-oficio-portrait {
+    width: 8.5in !important;
+    height: 13in !important;
+    padding: 0.4in !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .doc-paper-oficio-landscape {
+    width: 13in !important;
+    height: 8.5in !important;
+    padding: 0.4in !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .doc-paper-legal-portrait {
+    width: 8.5in !important;
+    height: 14in !important;
+    padding: 0.4in !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .doc-paper-legal-landscape {
+    width: 14in !important;
+    height: 8.5in !important;
+    padding: 0.4in !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .doc-paper-a4-portrait {
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 10mm !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .doc-paper-a4-landscape {
+    width: 297mm !important;
+    height: 210mm !important;
+    padding: 10mm !important;
+    page-break-after: always;
+    break-after: page;
+  }
+}

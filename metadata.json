@@ -1,0 +1,7 @@
+{
+  "name": "Estudio Creativo en Español",
+  "description": "Plataforma de ideación, gestión de proyectos y desarrollo interactivo completamente en español.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
