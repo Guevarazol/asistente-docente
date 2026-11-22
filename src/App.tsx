@@ -375,12 +375,15 @@ export default function App() {
     );
   }
 
-  // Enforce hidden license expiration lock
-  if (licenseStatus.isExpired) {
+  // Enforce hidden license expiration & device binding lock
+  const isDeviceBlocked = !licenseStatus.deviceBinding.isAuthorized && !licenseStatus.deviceBinding.isPortableUsbMode;
+  if (licenseStatus.isExpired || isDeviceBlocked) {
     return (
       <>
         <LicenseLockScreen
           expiresAtFormatted={licenseStatus.formattedExpiresAt}
+          isExpired={licenseStatus.isExpired}
+          deviceBinding={licenseStatus.deviceBinding}
           onUnlocked={() => setLicenseStatus(checkLicenseStatus())}
           onOpenAdminPanel={() => setShowHiddenLicenseModal(true)}
         />
