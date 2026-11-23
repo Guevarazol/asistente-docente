@@ -20,6 +20,8 @@ import {
   ShieldAlert,
   Users,
   X,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import type {
   ClassGuideData,
@@ -58,6 +60,8 @@ import { UserManualModal } from './components/UserManualModal';
 import { checkLicenseStatus, type LicenseStatus } from './utils/licenseManager';
 import { LicenseLockScreen } from './components/LicenseLockScreen';
 import { HiddenLicenseModal } from './components/HiddenLicenseModal';
+import { ModuleLockBanner } from './components/ModuleLockBanner';
+import { ModuleUnlockModal } from './components/ModuleUnlockModal';
 import { IncidentLogModule } from './modules/IncidentLogModule';
 import { LessonPlanModule } from './modules/LessonPlanModule';
 import { ExamModule } from './modules/ExamModule';
@@ -199,6 +203,86 @@ export default function App() {
   const [licenseStatus, setLicenseStatus] = useState<LicenseStatus>(() => checkLicenseStatus());
   const [showHiddenLicenseModal, setShowHiddenLicenseModal] = useState(false);
   const [nexusClicks, setNexusClicks] = useState(0);
+
+  // Module Data Lock State (Tamper-Protection)
+  const [lockedModules, setLockedModules] = useState<Record<string, boolean>>(() => {
+    try {
+      const stored = sessionStorage.getItem('renova_locked_modules');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [showModuleUnlockModal, setShowModuleUnlockModal] = useState(false);
+
+  const isCurrentModuleLocked = activeModule ? Boolean(lockedModules[activeModule]) : false;
+
+  const handleLockCurrentModule = () => {
+    if (!activeModule) return;
+    setLockedModules((prev) => {
+      const next = { ...prev, [activeModule]: true };
+      try {
+        sessionStorage.setItem('renova_locked_modules', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const handleUnlockCurrentModule = () => {
+    if (!activeModule) return;
+    setLockedModules((prev) => {
+      const next = { ...prev, [activeModule]: false };
+      try {
+        sessionStorage.setItem('renova_locked_modules', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setShowModuleUnlockModal(false);
+  };
+
+  const handleToggleModuleLock = () => {
+    if (isCurrentModuleLocked) {
+      setShowModuleUnlockModal(true);
+    } else {
+      handleLockCurrentModule();
+    }
+  };
+
+  // Inactivity Auto-Lock: if a module is open and inactive for 5 minutes, automatically protect data
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (activeView === 'modulo' && activeModule && !isCurrentModuleLocked) {
+          handleLockCurrentModule();
+        }
+      }, 5 * 60 * 1000);
+    };
+
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];
+    events.forEach((ev) => window.addEventListener(ev, resetTimer, { passive: true }));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((ev) => window.removeEventListener(ev, resetTimer));
+    };
+  }, [activeView, activeModule, isCurrentModuleLocked]);
+
+  // Alt + L shortcut to quickly toggle module data lock
+  useEffect(() => {
+    const handleAltL = (e: KeyboardEvent) => {
+      if (e.altKey && (e.key === 'l' || e.key === 'L')) {
+        e.preventDefault();
+        if (activeView === 'modulo') {
+          handleToggleModuleLock();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleAltL);
+    return () => window.removeEventListener('keydown', handleAltL);
+  }, [activeView, activeModule, isCurrentModuleLocked]);
 
   const handleSecretNexusClick = () => {
     setNexusClicks((prev) => {
@@ -429,6 +513,8 @@ export default function App() {
         onOpenApiKeyModal={() => setShowApiKeyModal(true)}
         onOpenManual={() => setShowManualModal(true)}
         onSecretNexusClick={handleSecretNexusClick}
+        isModuleLocked={isCurrentModuleLocked}
+        onToggleModuleLock={handleToggleModuleLock}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 pt-5 pb-24 md:pb-12 min-w-0">
@@ -589,7 +675,7 @@ export default function App() {
 
         {/* ACTIVE MODULE WORKSPACE */}
         {activeView === 'modulo' && activeModule && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="no-print flex flex-wrap items-center justify-between gap-2 pb-1">
               <div className="flex items-center gap-2.5">
                 <button
@@ -611,77 +697,133 @@ export default function App() {
                   )}
                 </div>
               </div>
+
+              {/* Botón rápido de bloqueo en cabecera del módulo */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleToggleModuleLock}
+                  className={`min-h-[40px] px-3.5 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                    isCurrentModuleLocked
+                      ? 'bg-amber-400 text-slate-950 border-amber-300 hover:bg-amber-300 ring-2 ring-amber-300/40 shadow-sm'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50 hover:text-amber-900 hover:border-amber-300'
+                  }`}
+                  title={
+                    isCurrentModuleLocked
+                      ? 'Desbloquear campos con PIN o código para seguir editando'
+                      : 'Bloquear campos de este módulo para evitar alteraciones'
+                  }
+                >
+                  {isCurrentModuleLocked ? (
+                    <>
+                      <Unlock className="w-4 h-4 text-slate-950" />
+                      <span>Seguir Editando</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4 text-amber-700" />
+                      <span>Bloquear Datos</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
-            {activeModule === 'bitacora' && (
-              <IncidentLogModule
-                key={openedDocument?.id || 'new-bitacora'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<IncidentLogData> | null}
-              />
-            )}
-            {activeModule === 'planificacion' && (
-              <LessonPlanModule
-                key={openedDocument?.id || 'new-plan'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<LessonPlanData> | null}
-              />
-            )}
-            {activeModule === 'examenes' && (
-              <ExamModule
-                key={openedDocument?.id || 'new-exam'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<ExamData> | null}
-              />
-            )}
-            {activeModule === 'jornalizacion' && (
-              <PacingGuideModule
-                key={openedDocument?.id || 'new-jor'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<PacingGuideData> | null}
-              />
-            )}
-            {activeModule === 'actas' && (
-              <MinutesModule
-                key={openedDocument?.id || 'new-actas'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<MinutesData> | null}
-              />
-            )}
-            {activeModule === 'guias' && (
-              <ClassGuideModule
-                key={openedDocument?.id || 'new-guias'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<ClassGuideData> | null}
-              />
-            )}
-            {activeModule === 'temarios' && (
-              <SyllabusModule
-                key={openedDocument?.id || 'new-temarios'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<SyllabusData> | null}
-              />
-            )}
-            {activeModule === 'diplomas' && (
-              <DiplomaModule
-                key={openedDocument?.id || 'new-diplomas'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<DiplomaBatchData> | null}
-              />
-            )}
-            {activeModule === 'grados' && (
-              <MyGradesModule
-                key={openedDocument?.id || 'grades-registry'}
-                config={config}
-              />
-            )}
-            {activeModule === 'desempeno' && (
-              <AcademicPerformanceModule
-                key={openedDocument?.id || 'performance-registry'}
-                config={config}
-                initialDocument={openedDocument as SavedDocument<ClassroomGradebook> | null}
-              />
-            )}
+            {/* Banner de Bloqueo de Datos */}
+            <ModuleLockBanner
+              isLocked={isCurrentModuleLocked}
+              moduleName={MODULE_LABELS[activeModule]}
+              onLock={handleLockCurrentModule}
+              onUnlockRequest={() => setShowModuleUnlockModal(true)}
+            />
+
+            {/* Contenedor del Módulo con Protección activa si está bloqueado */}
+            <div className={`transition-all duration-200 relative ${
+              isCurrentModuleLocked ? 'pointer-events-none select-none opacity-90' : ''
+            }`}>
+              {isCurrentModuleLocked && (
+                <div
+                  onClick={() => setShowModuleUnlockModal(true)}
+                  className="absolute inset-0 z-30 bg-slate-900/5 backdrop-blur-[0.5px] rounded-2xl flex items-start justify-center pt-8 pointer-events-auto cursor-not-allowed group"
+                  title="Campos bloqueados contra alteraciones. Haz clic aquí para desbloquear con PIN."
+                >
+                  <div className="bg-white/95 text-slate-800 px-4 py-2.5 rounded-2xl shadow-lg border-2 border-amber-300 flex items-center gap-2 text-xs font-bold animate-in fade-in zoom-in-95 group-hover:scale-105 transition cursor-pointer">
+                    <Lock className="w-4 h-4 text-amber-600" />
+                    <span>Campos protegidos contra edición · Haz clic para desbloquear con PIN</span>
+                  </div>
+                </div>
+              )}
+
+              {activeModule === 'bitacora' && (
+                <IncidentLogModule
+                  key={openedDocument?.id || 'new-bitacora'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<IncidentLogData> | null}
+                />
+              )}
+              {activeModule === 'planificacion' && (
+                <LessonPlanModule
+                  key={openedDocument?.id || 'new-plan'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<LessonPlanData> | null}
+                />
+              )}
+              {activeModule === 'examenes' && (
+                <ExamModule
+                  key={openedDocument?.id || 'new-exam'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<ExamData> | null}
+                />
+              )}
+              {activeModule === 'jornalizacion' && (
+                <PacingGuideModule
+                  key={openedDocument?.id || 'new-jor'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<PacingGuideData> | null}
+                />
+              )}
+              {activeModule === 'actas' && (
+                <MinutesModule
+                  key={openedDocument?.id || 'new-actas'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<MinutesData> | null}
+                />
+              )}
+              {activeModule === 'guias' && (
+                <ClassGuideModule
+                  key={openedDocument?.id || 'new-guias'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<ClassGuideData> | null}
+                />
+              )}
+              {activeModule === 'temarios' && (
+                <SyllabusModule
+                  key={openedDocument?.id || 'new-temarios'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<SyllabusData> | null}
+                />
+              )}
+              {activeModule === 'diplomas' && (
+                <DiplomaModule
+                  key={openedDocument?.id || 'new-diplomas'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<DiplomaBatchData> | null}
+                />
+              )}
+              {activeModule === 'grados' && (
+                <MyGradesModule
+                  key={openedDocument?.id || 'grades-registry'}
+                  config={config}
+                />
+              )}
+              {activeModule === 'desempeno' && (
+                <AcademicPerformanceModule
+                  key={openedDocument?.id || 'performance-registry'}
+                  config={config}
+                  initialDocument={openedDocument as SavedDocument<ClassroomGradebook> | null}
+                />
+              )}
+            </div>
           </div>
         )}
 
@@ -791,6 +933,14 @@ export default function App() {
         open={showHiddenLicenseModal}
         onClose={() => setShowHiddenLicenseModal(false)}
         onLicenseUpdated={() => setLicenseStatus(checkLicenseStatus())}
+      />
+
+      <ModuleUnlockModal
+        open={showModuleUnlockModal}
+        config={config}
+        moduleName={activeModule ? MODULE_LABELS[activeModule] : undefined}
+        onUnlocked={handleUnlockCurrentModule}
+        onClose={() => setShowModuleUnlockModal(false)}
       />
     </div>
   );

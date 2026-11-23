@@ -10,6 +10,7 @@ import {
   Home,
   LayoutTemplate,
   Lock,
+  Unlock,
   RotateCcw,
   Settings,
   Sparkles,
@@ -34,6 +35,8 @@ interface AppHeaderProps {
   onOpenApiKeyModal?: () => void;
   onOpenManual?: () => void;
   onSecretNexusClick?: () => void;
+  isModuleLocked?: boolean;
+  onToggleModuleLock?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -44,6 +47,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onOpenApiKeyModal,
   onOpenManual,
   onSecretNexusClick,
+  isModuleLocked = false,
+  onToggleModuleLock,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showBackupMenu, setShowBackupMenu] = useState(false);
@@ -258,16 +263,43 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {/* Instalar App PWA */}
           <PWAInstallButton />
 
-          {/* Bloquear */}
+          {/* Bloquear Datos de Módulo contra Modificaciones */}
+          {activeView === 'modulo' && onToggleModuleLock && (
+            <button
+              type="button"
+              onClick={onToggleModuleLock}
+              title={
+                isModuleLocked
+                  ? 'Módulo bloqueado contra modificaciones. Haz clic para desbloquear con PIN'
+                  : 'Bloquear campos de este módulo para evitar alteraciones'
+              }
+              className={`min-h-[36px] px-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold transition cursor-pointer shrink-0 border ${
+                isModuleLocked
+                  ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-sm ring-2 ring-amber-300/40'
+                  : 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+              }`}
+            >
+              {isModuleLocked ? (
+                <Lock className="w-3.5 h-3.5 text-slate-950" />
+              ) : (
+                <Unlock className="w-3.5 h-3.5 text-[#FFA92D]" />
+              )}
+              <span className="hidden sm:inline">
+                {isModuleLocked ? 'Protegido' : 'Bloquear Datos'}
+              </span>
+            </button>
+          )}
+
+          {/* Bloquear Aplicación General con PIN */}
           <button
             type="button"
             onClick={onLockApp}
-            title="Bloquear con PIN"
+            title="Bloquear aplicación con PIN"
             aria-label="Bloquear aplicación con PIN"
             className="min-h-[36px] px-2 sm:px-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-1.5 text-xs font-medium transition cursor-pointer shrink-0"
           >
             <Lock className="w-3.5 h-3.5" />
-            <span className="hidden xl:inline">Bloquear</span>
+            <span className="hidden xl:inline">Bloquear App</span>
           </button>
         </div>
       </div>

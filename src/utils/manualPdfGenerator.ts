@@ -326,9 +326,11 @@ export const MANUAL_SECTIONS: ManualSection[] = [
       '2. Restaurar Respaldo JSON: Permite cargar un archivo de respaldo previo para restablecer su entorno de trabajo en caso de cambio de equipo o mantenimiento del sistema.',
       '3. Exportar Nómina a Excel / CSV: Genera una hoja de cálculo con la lista de alumnos y promedios para reportes ante la secretaría escolar.',
       '4. Limpieza o Reinicio de Datos: Función controlada para limpiar datos de demostración e iniciar un nuevo año lectivo desde cero.',
+      '5. Bloqueo de Datos contra Modificaciones en Pantalla (Modo Protegido): Botón en el encabezado y atajo Alt + L para congelar de inmediato todos los campos de notas y listas cuando termine de digitar, evitando alteraciones accidentales si deja la computadora encendida.',
     ],
     tips: [
       'Se recomienda realizar una descarga de Respaldo JSON al cierre de cada periodo trimestral para conservar un histórico permanente e inalterable.',
+      'Utilice el atajo Alt + L al ausentarse de su aula para proteger la pantalla y evitar que terceras personas manipulen los registros.',
     ],
   },
   {
@@ -352,28 +354,33 @@ export const MANUAL_SECTIONS: ManualSection[] = [
     badge: 'Seguridad y Control',
     summary: 'Política de hasta 2 computadoras autorizadas por licencia, huella de hardware, modo portátil USB y vigencias programables.',
     content: [
-      'Asistente Docente cuenta con un sistema de proteccion institucional disenado por Corporacion Medica Integral RENOVA para garantizar la legalidad del software sin entorpecer la labor pedagogica del docente:',
-      '1. Politica de 2 Ordenadores Autorizados por Licencia:',
-      'Cada licencia adquirida autoriza la vinculacion e instalacion de la aplicacion en un maximo de dos (2) computadoras personales: Equipo 1 (computadora de aula o principal) y Equipo 2 (laptop portatil o computadora del hogar).',
-      '2. Identificador Unico de Hardware (Hardware Token / Machine ID):',
-      'Al ejecutarse en un ordenador, la aplicacion genera un identificador unico determinista (ejemplo: RNX-PC-9A1F-38C2). Este codigo identifica de manera inequivoca el entorno de trabajo del docente sin recopilar informacion privada.',
-      '3. Procedimiento de Vinculacion y Activacion:',
-      '- Al abrir el archivo Asistente_Docente.html por primera vez en un computador, se presenta la pantalla de Vinculacion de Equipo Requerida.',
-      '- El docente pulsa el boton "Copiar ID" o hace clic en el enlace directo de WhatsApp para enviar su Hardware Token al Dr. Oscar Alexander Guevara (Tel. +503 7140-5449).',
-      '- La direccion ejecutiva de RENOVA NEXUS emite una Clave de Activacion criptografica unica vinculada exclusivamente a ese equipo.',
-      '- Al digitar la clave recibida (o el codigo maestro 1978), el equipo queda formalmente registrado y activado.',
+      'Asistente Docente cuenta con un sistema de protección institucional diseñado por Corporación Médica Integral RENOVA para garantizar la legalidad del software sin entorpecer la labor pedagógica del docente:',
+      '1. Política de 2 Ordenadores Autorizados por Licencia:',
+      'Cada licencia adquirida autoriza la vinculación e instalación de la aplicación en un máximo de dos (2) computadoras personales: Equipo 1 (computadora de aula o principal) y Equipo 2 (laptop portátil o computadora del hogar).',
+      '2. Identificador Único de Hardware (Hardware Token / Machine ID):',
+      'Al ejecutarse en un ordenador, la aplicación genera un identificador único determinista (ejemplo: RNX-PC-9A1F-38C2). Este código identifica de manera inequívoca el entorno de trabajo del docente sin recopilar información privada.',
+      '3. Procedimiento de Vinculación y Activación:',
+      '- Al abrir el archivo Asistente_Docente.html por primera vez en un computador, se presenta la pantalla de Vinculación de Equipo Requerida.',
+      '- El docente pulsa el botón "Copiar ID" o hace clic en el enlace directo de WhatsApp para enviar su Hardware Token al Dr. Oscar Alexander Guevara (Tel. +503 7140-5449).',
+      '- La dirección ejecutiva de RENOVA NEXUS emite una Clave de Activación criptográfica única vinculada exclusivamente a ese equipo.',
+      '- Al digitar la clave recibida (o el código maestro 1978), el equipo queda formalmente registrado y activado.',
       '4. Bloqueo de Terceras Copias no Autorizadas:',
-      'Si el archivo se copia a un tercer ordenador, la aplicacion bloquea el acceso informando que el cupo maximo de 2 equipos ha sido alcanzado. Para transferir la licencia a un equipo de reemplazo (por compra o formateo), el docente debe solicitar la desvinculacion del equipo anterior.',
-      '5. Modo Portatil en Memoria USB:',
-      'Para docentes que imparten clases en multiples aulas con computadoras compartidas, la aplicacion permite ejecutarse directamente desde la memoria USB en "Modo Portatil USB" sin fijarse de forma permanente al disco duro del aula.',
+      'Si el archivo se copia a un tercer ordenador, la aplicación bloquea el acceso informando que el cupo máximo de 2 equipos ha sido alcanzado. Para transferir la licencia a un equipo de reemplazo (por compra o formateo), el docente debe solicitar la desvinculación del equipo anterior.',
+      '5. Modo Portátil en Memoria USB:',
+      'Para docentes que imparten clases en múltiples aulas con computadoras compartidas, la aplicación permite ejecutarse directamente desde la memoria USB en "Modo Portátil USB" sin fijarse de forma permanente al disco duro del aula.',
       '6. Temporizadores de Vigencia y Licencia Vitalicia:',
-      '- Periodo de Prueba (7 Dias): Evaluacion institucional completa durante una semana.',
-      '- Licencias Periodicas: Temporizadores programables por dias, meses o anos.',
+      '- Periodo de Prueba (7 Días): Evaluación institucional completa durante una semana.',
+      '- Licencias Periódicas: Temporizadores programables por días, meses o años.',
       '- Licencia Vitalicia Permanente: Acceso continuo sin temporizadores de caducidad.',
+      '7. Botón de Bloqueo de Datos contra Modificaciones y Auto-Bloqueo de Seguridad:',
+      '- Protección Inmediata en el Aula: Al concluir la digitación de calificaciones, nóminas o actas, pulse el botón "Bloquear Datos" (o presione Alt + L). Todos los campos de entrada, listas, selectores y tablas entran al instante en modo de solo lectura protegida. Si la docente se levanta o deja la sesión abierta, nadie podrá alterar las notas ni los expedientes.',
+      '- Desbloqueo Seguro para Seguir Editando: Al pulsar "Seguir Editando", el sistema solicita el PIN personal de la docente o el código maestro 1978 mediante un teclado numérico táctil seguro.',
+      '- Auto-Bloqueo Inteligente por Inactividad: Si no se detecta actividad de teclado o ratón durante 5 minutos continuos, la plataforma bloquea automáticamente los formularios para salvaguardar la integridad de los datos.',
     ],
     tips: [
-      'Para abrir el panel oculto de gestion de licencias y equipos, presione el atajo Ctrl + Shift + L o haga 5 clics seguidos sobre "RENOVA NEXUS".',
-      'El panel de administracion incluye un Generador de Claves por ID de Equipo para expedir claves a docentes en segundos.',
+      'Para alternar rápidamente el bloqueo o desbloqueo de datos en cualquier módulo, puede utilizar la combinación de teclas Alt + L.',
+      'Para abrir el panel oculto de gestión de licencias y equipos, presione el atajo Ctrl + Shift + L o haga 5 clics seguidos sobre "RENOVA NEXUS".',
+      'El panel de administración incluye un Generador de Claves por ID de Equipo para expedir claves a docentes en segundos.',
     ],
   },
   {
@@ -698,19 +705,22 @@ export function generateUserManualPdf(config?: SchoolConfig): jsPDF {
     const cleanTitle = sanitizePdfText(sec.title);
     doc.text(cleanTitle, marginX + 14, cursorY + 1.6);
 
-    // Badge on the right
-    if (sec.badge) {
+    // Badge on the right & Dotted leader line
+    const cleanBadge = sec.badge ? sanitizePdfText(sec.badge) : '';
+    let badgeWidth = 0;
+    if (cleanBadge) {
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(7.5);
       doc.setTextColor(180, 83, 9);
-      doc.text(sanitizePdfText(sec.badge), pageWidth - marginX - 4, cursorY + 1.6, { align: 'right' });
+      doc.text(cleanBadge, pageWidth - marginX - 4, cursorY + 1.6, { align: 'right' });
+      badgeWidth = doc.getTextWidth(cleanBadge);
     }
 
-    // Dotted leader line
+    // Dotted leader line (dynamically measured to never collide)
     const titleWidth = doc.getTextWidth(cleanTitle);
     const startDotsX = marginX + 16 + titleWidth;
-    const endDotsX = pageWidth - marginX - 42;
-    if (endDotsX > startDotsX) {
+    const endDotsX = pageWidth - marginX - 6 - badgeWidth;
+    if (endDotsX > startDotsX + 5) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
       doc.setTextColor(203, 213, 225);
